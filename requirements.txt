@@ -1,0 +1,3 @@
+Pillow==3.0.0
+PySide==1.2.2
+pywin32==219
