@@ -90,6 +90,8 @@ def get_accept():
     game = screenshot()
     if not game:
         return False
+    elif not focused():
+        return False
 
     startx, starty, _, _ = win32gui.GetWindowRect(get_hwnd())
     w, h = game.size

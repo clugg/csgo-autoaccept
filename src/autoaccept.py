@@ -16,7 +16,7 @@ from PySide.QtCore import *
 from PySide.QtGui import *
 
 __author__ = "James \"clug\" <clug@clug.xyz>"
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 
 def click(x=False, y=False):
