@@ -17,7 +17,7 @@ from PySide.QtGui import *
 import services
 
 __author__ = "James \"clug\" <clug@clug.xyz>"
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 
 logging.basicConfig(filename="autoaccept.log", format="%(asctime)s - [%(levelname)s] %(name)s - %(message)s", level=logging.DEBUG)
 
