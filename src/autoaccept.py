@@ -87,7 +87,7 @@ class AutoAccept_GUI(QMainWindow):
     def scan(self, on):
         if on:
             if not matchmaking.exists():
-                self.warn_notrunning()
+                self.critical_notrunning()
                 on = False
             else:
                 self.timer.start(1000)
@@ -107,8 +107,8 @@ class AutoAccept_GUI(QMainWindow):
     def warn_aero(self):
         return QMessageBox.warning(self, "AutoAccept", "AutoAccept has detected that you have Windows Aero enabled. This will prevent the program from functioning properly if your game is not in windowed mode.", QMessageBox.Ok)
 
-    def warn_notrunning(self):
-        return QMessageBox.warning(self, "AutoAccept", "AutoAccept has detected that CS:GO is not running. Please launch CS:GO before starting a scan.", QMessageBox.Ok)
+    def critical_notrunning(self):
+        return QMessageBox.critical(self, "AutoAccept", "AutoAccept has detected that CS:GO is not running. Please launch CS:GO before starting a scan.", QMessageBox.Ok)
 
 
 if __name__ == "__main__":
