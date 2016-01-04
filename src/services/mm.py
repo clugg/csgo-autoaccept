@@ -5,13 +5,15 @@ Provides specific functionality for Valve's official matchmaking service.
 """
 
 import ctypes
+import logging
+import re
 
 import win32api
 import win32gui
 from PIL import ImageGrab
 
 # use this to find csgo's hwnd
-WINDOW_TITLE = "Counter-Strike: Global Offensive"
+WINDOW_TITLE = re.compile("^Counter-Strike: Global Offensive$")
 VALID_RGB = {
     (8, 59, 24), (0, 117, 75), (0, 107, 27), (74, 181, 139), (4, 89, 70), (5, 94, 73),
     (0, 96, 26), (9, 140, 99), (0, 127, 34), (222, 241, 233), (3, 71, 55), (33, 147, 110),
@@ -229,6 +231,8 @@ VALID_RGB = {
     (22, 150, 110), (97, 207, 162), (25, 145, 107), (99, 181, 149), (5, 99, 75)
 }
 
+log = logging.getLogger("services.mm")
+
 def get_hwnd():
     """
     Get the HWND for any CS:GO window it can find.
@@ -239,7 +243,7 @@ def get_hwnd():
     """
 
     def _handle_hwnd(hwnds, hwnd, extra):
-        if win32gui.GetWindowText(hwnd) == WINDOW_TITLE:
+        if re.match(WINDOW_TITLE, win32gui.GetWindowText(hwnd)):
             hwnds.append(hwnd)
 
     hwnds = []
@@ -304,8 +308,10 @@ def get_accept():
 
     game = screenshot()
     if not game:
+        log.debug("get_accept failed: csgo not running")
         return False
     elif not focused():
+        log.debug("get_accept failed: csgo not focused")
         return False
 
     startx, starty, _, _ = win32gui.GetWindowRect(get_hwnd())
@@ -315,5 +321,7 @@ def get_accept():
     for x in range(0, w // 2, 4): # skip 4 horizontal pixels at a time due to vertical gradient
         for y in range(0, h // 2):
             if pixels[x, y] in VALID_RGB:
+                log.debug("get_accept found valid colour {} at {}, {}".format(pixels[x, y], x, y))
                 return startx + x, starty + y
+    log.debug("get_accept failed: accept not found")
     return False

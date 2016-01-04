@@ -9,6 +9,7 @@ from __future__ import division
 from services import mm as matchmaking
 
 import ctypes
+import logging
 import sys
 import webbrowser
 
@@ -17,6 +18,8 @@ from PySide.QtGui import *
 
 __author__ = "James \"clug\" <clug@clug.xyz>"
 __version__ = "1.1.0"
+
+logging.basicConfig(filename="autoaccept.log", format="%(asctime)s - [%(levelname)s] %(name)s - %(message)s", level=logging.DEBUG)
 
 
 def click(x=False, y=False):
