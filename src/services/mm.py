@@ -4,16 +4,12 @@ csgo-autoaccept
 Provides specific functionality for Valve's official matchmaking service.
 """
 
-import ctypes
 import logging
-import re
 
-import win32api
-import win32gui
-from PIL import ImageGrab
+import base
 
 # use this to find csgo's hwnd
-WINDOW_TITLE = re.compile("^Counter-Strike: Global Offensive$")
+WINDOW_TITLE = base.re.compile("^Counter-Strike: Global Offensive$")
 VALID_RGB = {
     (8, 59, 24), (0, 117, 75), (0, 107, 27), (74, 181, 139), (4, 89, 70), (5, 94, 73),
     (0, 96, 26), (9, 140, 99), (0, 127, 34), (222, 241, 233), (3, 71, 55), (33, 147, 110),
@@ -189,7 +185,7 @@ VALID_RGB = {
     (16, 134, 95), (213, 238, 226), (235, 249, 242), (2, 120, 83), (12, 69, 34), (235, 248, 241),
     (28, 168, 124), (0, 94, 67), (0, 92, 23), (5, 115, 81), (213, 235, 226), (9, 114, 82),
     (82, 150, 129), (5, 80, 66), (5, 72, 59), (4, 84, 67), (6, 91, 71), (224, 239, 232),
-    (25, 139, 102), (70, 161, 130), (5, 103, 76), (215, 241, 230), (7, 117, 83), (244, 249, 247),
+    (25, 139, 102), (70, 161, 130), (5, 103, 76), (215, 241, 230), (7, 117, 83),
     (7, 124, 87), (72, 147, 124), (0, 110, 80), (3, 90, 70), (5, 77, 65), (206, 228, 218),
     (0, 118, 75), (6, 137, 95), (4, 71, 55), (1, 78, 54), (239, 248, 245), (248, 251, 250),
     (6, 108, 80), (134, 212, 180), (1, 112, 80), (6, 112, 81), (4, 131, 89), (113, 183, 155),
@@ -233,69 +229,10 @@ VALID_RGB = {
 
 log = logging.getLogger("services.mm")
 
-def get_hwnd():
-    """
-    Get the HWND for any CS:GO window it can find.
-
-    Returns:
-        int: HWND of window if it is found.
-        bool: False if no CS:GO window exists.
-    """
-
-    def _handle_hwnd(hwnds, hwnd, extra):
-        if re.match(WINDOW_TITLE, win32gui.GetWindowText(hwnd)):
-            hwnds.append(hwnd)
-
-    hwnds = []
-    win32gui.EnumWindows(lambda hwnd, extra: _handle_hwnd(hwnds, hwnd, extra), None)
-    return hwnds[0] if hwnds else False
-
-def focused():
-    """
-    Check if the CS:GO window is focused (in the foreground).
-
-    Returns:
-        bool: Whether or not the CS:GO window is focused.
-    """
-
-    return win32gui.GetForegroundWindow() == get_hwnd()
-
-def exists():
-    """
-    Check if it can find an open CS:GO window.
-
-    Returns:
-        bool: Whether or not the CS:GO window exists.
-    """
-
-    return get_hwnd() is not False
-
-def aero_enabled():
-    """
-    Check if Windows Aero is enabled.
-
-    Returns:
-        bool: Whether or not Windows Aero is enabled.
-    """
-
-    try:
-        hasAero = ctypes.c_bool()
-        retcode = ctypes.windll.dwmapi.DwmIsCompositionEnabled(ctypes.byref(hasAero))
-        return retcode == 0 and hasAero.value
-    except AttributeError:
-        return False
-
-def screenshot():
-    """
-    Take a screenshot of the CS:GO window if it exists.
-
-    Returns:
-        Image: Image data for the screenshot taken.
-        bool: False if no CS:GO window exists.
-    """
-
-    hwnd = get_hwnd()
-    return ImageGrab.grab(win32gui.GetWindowRect(hwnd)) if hwnd else False
+get_hwnd = lambda: base.get_hwnd(WINDOW_TITLE)
+focused = lambda: base.focused(WINDOW_TITLE)
+exists = lambda: base.exists(WINDOW_TITLE)
+screenshot = lambda: base.screenshot(WINDOW_TITLE)
 
 def get_accept():
     """
@@ -314,7 +251,7 @@ def get_accept():
         log.debug("get_accept failed: csgo not focused")
         return False
 
-    startx, starty, _, _ = win32gui.GetWindowRect(get_hwnd())
+    startx, starty, _, _ = base.win32gui.GetWindowRect(get_hwnd())
     w, h = game.size
     pixels = game.load()
     # assume button is in top left quarter of game window

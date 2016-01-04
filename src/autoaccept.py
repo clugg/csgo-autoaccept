@@ -6,8 +6,6 @@ Automatically detects and clicks the accept button in CS:GO matchmaking lobbies.
 
 from __future__ import division
 
-from services import mm as matchmaking
-
 import ctypes
 import logging
 import sys
@@ -15,6 +13,8 @@ import webbrowser
 
 from PySide.QtCore import *
 from PySide.QtGui import *
+
+import services
 
 __author__ = "James \"clug\" <clug@clug.xyz>"
 __version__ = "1.1.0"
@@ -39,7 +39,7 @@ class AutoAccept_GUI(QMainWindow):
         self.initUI()
         self.show()
 
-        if matchmaking.aero_enabled():
+        if services.base.aero_enabled():
             self.warn_aero()
 
     def initUI(self):
@@ -81,7 +81,7 @@ class AutoAccept_GUI(QMainWindow):
         self.setCentralWidget(self.widgets["main"])
 
     def accept_scan(self):
-        found = matchmaking.get_accept()
+        found = services.mm.get_accept()
         if found:
             self.scan(False)
             click(*found)
@@ -89,7 +89,7 @@ class AutoAccept_GUI(QMainWindow):
 
     def scan(self, on):
         if on:
-            if not matchmaking.exists():
+            if not services.mm.exists():
                 self.critical_notrunning()
                 on = False
             else:
