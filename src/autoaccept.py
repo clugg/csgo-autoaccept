@@ -108,7 +108,7 @@ class AutoAccept_GUI(QMainWindow):
         return webbrowser.open("http://github.com/clugg/csgo-autoaccept")
 
     def warn_aero(self):
-        return QMessageBox.warning(self, "AutoAccept", "AutoAccept has detected that you have Windows Aero enabled. This will prevent the program from functioning properly if your game is not in windowed mode.", QMessageBox.Ok)
+        return QMessageBox.warning(self, "AutoAccept", "AutoAccept has detected that you have Windows Aero enabled. This will prevent Valve matchmaking detection from functioning properly if your game is not in windowed mode.", QMessageBox.Ok)
 
     def critical_notrunning(self):
         return QMessageBox.critical(self, "AutoAccept", "AutoAccept has detected that CS:GO is not running. Please launch CS:GO before starting a scan.", QMessageBox.Ok)
