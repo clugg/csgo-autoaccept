@@ -61,19 +61,21 @@ class AutoAccept_GUI(QMainWindow):
         self.layouts["buttons"].addWidget(self.buttons["scan"])
         self.layouts["buttons"].addWidget(self.buttons["help"])
 
+        self.checkboxes["loop"] = QCheckBox("Keep scanning after accepted")
+
         """self.checkboxes["mm"] = QCheckBox("MM")
         self.checkboxes["esea"] = QCheckBox("ESEA")
-        self.checkboxes["faceit"] = QCheckBox("FaceIT")
+        self.checkboxes["faceit"] = QCheckBox("FaceIT")"""
 
-        self.layout["checkboxes"] = QHBoxLayout()
+        self.layouts["checkboxes"] = QHBoxLayout()
         for box in self.checkboxes:
-            self.layout["checkboxes"].addWidget(self.checkboxes[box])"""
+            self.layouts["checkboxes"].addWidget(self.checkboxes[box])
 
         self.labels["status"] = QLabel("<center>Scan is not running.</center>")
 
         self.layouts["main"] = QVBoxLayout()
         self.layouts["main"].addLayout(self.layouts["buttons"])
-        #self.layouts["main"].addLayout(self.layout["checkboxes"])
+        self.layouts["main"].addLayout(self.layouts["checkboxes"])
         self.layouts["main"].addWidget(self.labels["status"])
         self.widgets["main"] = QWidget()
         self.widgets["main"].setLayout(self.layouts["main"])
@@ -83,7 +85,8 @@ class AutoAccept_GUI(QMainWindow):
     def accept_scan(self):
         found = services.mm.get_accept()
         if found:
-            self.scan(False)
+            if not self.checkboxes["loop"].isChecked():
+                self.scan(False)
             click(*found)
             self.set_status("Found accept button.")
 
